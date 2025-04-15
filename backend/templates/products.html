@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Товары - Мой Магазин{% endblock %}
+
+{% block content %}
+    <div class="mb-8">
+        <form method="GET" action="/products" class="flex flex-col sm:flex-row gap-4">
+            <input type="text" name="query" value="{{ query }}" placeholder="Поиск товаров..." class="w-full sm:w-1/2 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" class="btn bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Найти</button>
+        </form>
+    </div>
+    <section>
+        <h2 class="text-2xl font-semibold mb-6">Все товары</h2>
+        {% if products %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {% for product in products %}
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                        <img src="{{ product.image or 'https://via.placeholder.com/300x200?text=' + product.name }}" alt="{{ product.name }}" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold">{{ product.name }}</h3>
+                            <p class="text-gray-600">{{ product.price }} ₽</p>
+                            <div class="mt-4 flex space-x-2">
+                                <a href="/products/{{ product.id }}" class="btn flex-1 text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Подробнее</a>
+                                <form action="/cart/add/{{ product.id }}" method="POST">
+                                    <button type="submit" class="btn flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">В корзину</button>
+                                </form>
+                            </div>
+                            {% if user.is_admin %}
+                                <div class="mt-2 flex space-x-2">
+                                    <a href="/products/edit/{{ product.id }}" class="btn flex-1 text-center bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600">Редактировать</a>
+                                    <form action="/products/delete/{{ product.id }}" method="POST">
+                                        <button type="submit" class="btn flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Удалить</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-600">Товары не найдены. Попробуйте изменить запрос.</p>
+        {% endif %}
+    </section>
+{% endblock %}

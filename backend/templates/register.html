@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+    <h1 class="text-2xl font-bold mb-4">Регистрация</h1>
+    <form method="post" action="/auth/register" class="space-y-4">
+        <div>
+            <label class="block">Имя</label>
+            <input type="text" name="name" class="border p-2 w-full" required>
+        </div>
+        <div>
+            <label class="block">Email</label>
+            <input type="email" name="email" class="border p-2 w-full" required>
+        </div>
+        <div>
+            <label class="block">Пароль</label>
+            <input type="password" name="password" class="border p-2 w-full" required>
+        </div>
+        <button type="submit" class="bg-blue-500 text-white p-2 rounded">Зарегистрироваться</button>
+    </form>
+    <p class="mt-4">Уже есть аккаунт? <a href="/auth/login" class="text-blue-500">Войти</a></p>
+{% endblock %}

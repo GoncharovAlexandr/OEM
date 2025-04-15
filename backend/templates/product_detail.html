@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - Мой Магазин{% endblock %}
+
+{% block content %}
+    <div class="flex flex-col md:flex-row gap-8">
+        <div class="md:w-1/2">
+            <img src="{{ product.image or 'https://via.placeholder.com/500x400?text=' + product.name }}" alt="{{ product.name }}" class="w-full rounded-lg shadow-md">
+        </div>
+        <div class="md:w-1/2">
+            <h1 class="text-3xl font-bold mb-4">{{ product.name }}</h1>
+            <div class="flex items-center mb-4">
+                <span class="text-yellow-500">
+                    {% for i in range(5) %}
+                        {% if i < avg_rating|float %}
+                            ★
+                        {% else %}
+                            ☆
+                        {% endif %}
+                    {% endfor %}
+                </span>
+                <span class="ml-2 text-gray-600">({{ avg_rating }} / 5)</span>
+            </div>
+            <p class="text-2xl text-gray-800 mb-4">{{ product.price }} ₽</p>
+            <p class="text-gray-600 mb-4">В наличии: {{ product.stock_quantity }} шт.</p>
+            <form action="/cart/add/{{ product.id }}" method="POST">
+                <button type="submit" class="btn bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">Добавить в корзину</button>
+            </form>
+            {% if user.is_admin %}
+                <div class="mt-4 flex space-x-2">
+                    <a href="/products/edit/{{ product.id }}" class="btn bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600">Редактировать</a>
+                    <form action="/products/delete/{{ product.id }}" method="POST">
+                        <button type="submit" class="btn bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700">Удалить</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <section class="mt-12">
+        <h2 class="text-2xl font-semibold mb-6">Отзывы</h2>
+        {% if reviews %}
+            {% for review in reviews %}
+                <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+                    <p class="text-gray-600">
+                        Рейтинг:
+                        <span class="text-yellow-500">
+                            {% for i in range(5) %}
+                                {% if i < review.rating %}
+                                    ★
+                                {% else %}
+                                    ☆
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                    </p>
+                    <p class="text-gray-800">{{ review.comment }}</p>
+                    <p class="text-gray-500 text-sm mt-2">{{ review.review_date }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-gray-600">Отзывов пока нет.</p>
+        {% endif %}
+        {% if is_authenticated %}
+            <div class="mt-6">
+                <h3 class="text-xl font-semibold mb-4">Оставить отзыв</h3>
+                <form action="/products/{{ product.id }}/review" method="POST" x-data="{ rating: 0 }">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-2">Рейтинг</label>
+                        <div class="flex space-x-1">
+                            <template x-for="i in 5" :key="i">
+                                <button
+                                    type="button"
+                                    @click="rating = i"
+                                    :class="rating >= i ? 'text-yellow-500' : 'text-gray-300'"
+                                    class="text-2xl focus:outline-none"
+                                >
+                                    ★
+                                </button>
+                            </template>
+                        </div>
+                        <input type="hidden" name="rating" :value="rating" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="comment" class="block text-gray-700 font-medium mb-2">Комментарий</label>
+                        <textarea id="comment" name="comment" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <button type="submit" class="btn bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">Отправить</button>
+                </form>
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

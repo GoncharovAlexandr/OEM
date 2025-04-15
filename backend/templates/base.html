@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Мой Магазин{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+    <header class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold">Мой Магазин</a>
+            <nav class="flex items-center space-x-4">
+                <a href="/products" class="hover:underline">Товары</a>
+                <a href="/cart" class="hover:underline">Корзина</a>
+                {% if is_authenticated %}
+                    <form action="/auth/jwt/logout" method="POST">
+                        <button type="submit" class="hover:underline">Выйти</button>
+                    </form>
+                {% else %}
+                    <a href="/auth/jwt/login" class="hover:underline">Войти</a>
+                    <a href="/auth/register" class="hover:underline">Регистрация</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    <main class="container mx-auto p-4 flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="bg-gray-800 text-white p-4 mt-auto">
+        <div class="container mx-auto text-center">
+            <p>© 2025 Мой Магазин. Все права защищены.</p>
+        </div>
+    </footer>
+</body>
+</html>
